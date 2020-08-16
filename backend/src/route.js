@@ -5,6 +5,7 @@ const ProductController = require('./controllers/ProductController')
 const LoginController = require('./controllers/LoginController')
 const User = require('./models/User')
 const uploadConfig = require('./config/upload')
+const verifyToken = require('./config/tokenVerif')
 
 const routes = express.Router()
 const upload = multer(uploadConfig)
@@ -18,18 +19,16 @@ routes.get('/users',(req,res)=>{
     )
 })
 // get method  user bye id
-routes.get('/user/:userid',(req,res)=>{
-    User.findById(req.params.userid,(err,user)=>res.send(user))
-})
+routes.get('/user/:userid',verifyToken,LoginController.getUsername)
 
 //Login 
 routes.post('/login',LoginController.userLogin)
 
 //produit
-routes.get('/products',ProductController.getAllProducts)
-routes.get('/products/:category',ProductController.getByCategory)
-routes.get('/product/:productid',ProductController.getProductByid)
-routes.post('/product',upload.single('img'),ProductController.createProduct)
+routes.get('/products',verifyToken,ProductController.getAllProducts)
+routes.get('/products/:category',verifyToken,ProductController.getByCategory)
+routes.get('/product/:productid',verifyToken,ProductController.getProductByid)
+routes.post('/product',verifyToken,upload.single('img'),ProductController.createProduct)
 
 //user
  routes.post('/register',UserController.store)

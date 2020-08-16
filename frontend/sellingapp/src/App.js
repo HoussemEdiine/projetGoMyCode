@@ -1,11 +1,16 @@
 import React from 'react';
 import './App.css';
-
+import './Routes'
+import { Container } from 'reactstrap'
+import Routes from './Routes';
+ 
 function App() {
-  return (
-    <div className="App">
-      <h1>say hi to in this hot time</h1>
-    </div>
+    return (
+    <Container>
+      <Routes/>
+    </Container>
+     
+  
   );
 }
 

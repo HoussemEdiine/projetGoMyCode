@@ -1,5 +1,7 @@
 const User = require('../models/User')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+const { createProduct } = require('./ProductController')
 
 module.exports = {
 
@@ -27,7 +29,15 @@ module.exports = {
                  firstname : user.firstname,
                  lastname : user.lastname
               }
-              return res.json(userResp)
+              //return res.json(userResp)
+              return jwt.sign({user : userResp},'secret',(err,token)=>{
+                  return res.json({
+                      user : token ,
+                      user_id : user._id 
+
+                  }) 
+                        
+              })
             }
             else{
                 return res.status(200).json({
@@ -39,7 +49,30 @@ module.exports = {
         } catch (error) {
             throw Error(`error while login a user ${error}`)
         }
+    },
+    getUsername (req,res) {
+    jwt.verify(req.token ,'secret', (err,authData)=>{
+ 
+   if(err){
+       res.sendStatus(403)
+   }
+ 
+ else { 
+ 
+ const {userid} = req.params
+try {
+   
+    const username =  User.findById(userid)
+    if(username){
+        return res.json({authData:authData , username : username.firstname})
     }
+    
+} catch (error) {
+    throw Error(error)
+}
+    }
+    })
+   }
 
 
 }

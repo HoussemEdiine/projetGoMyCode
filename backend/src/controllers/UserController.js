@@ -1,7 +1,6 @@
 const User = require('../models/User')
 const bcrypt = require('bcrypt')
-const { get } = require('http')
-const { RSA_NO_PADDING } = require('constants')
+
  
 module.exports = {
     async store(req,res) {
@@ -13,12 +12,17 @@ module.exports = {
             if(!existingUser){
                 hashPassword = await  bcrypt.hash(password,10)
                 const user = await User.create({
-                firstname: firstname,
-                lastname:lastname,
+                firstname,
+                lastname,
                 password:hashPassword,
-                email:email
+                email
             }) 
-         return res.json(user)
+         return res.json({
+             _id:user._id,
+             firstname:user.firstname,
+             lastname:user.lastname,
+             email:user.email
+         })
             }
           return res.status(400).json({
               message : 'email already exist'

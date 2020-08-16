@@ -1,13 +1,20 @@
 const Prouct = require('../models/Product')
 const User = require('../models/User')
+const jwt = require('jsonwebtoken')
 module.exports = {
-    async createProduct(req,res){
-        try {
+     createProduct(req,res){
+        jwt.verify(req.token ,'secret', async(err,authData)=>{
+        if(err){
+            res.sendStatus(403)
+        }
+        else{
+            try {
     
             const {name,discription,price,category}=req.body
-            const {user_id} = req.headers
             const {filename} = req.file
-            const user = await User.findById(user_id)
+           
+            const user = await User.findById(authData.user._id)
+           
             if(!user){
                 return res.status(400).json({
                     message:'user does not exist !!'
@@ -17,19 +24,26 @@ module.exports = {
                 name,
                 discription,
                 price,
-                user:user_id,
+                user:authData.user._id,
                 img : filename,
                 category
             })
-            return res.json(product)
+            if(product){
+                return res.json({authData , product})
+            }
+            
             
         } catch (error) {
            return res.json({
-               message :'something wrong '
+               message :`error ${error}`
            }) 
             
         }
+    }
+    })
     },
+
+
     async getProductByid (req,res){
          const {productid} = req.params
          try {
@@ -49,7 +63,7 @@ module.exports = {
     
     async getByCategory(req,res){ 
        const { category } = req.params
-       const query =   { category }  || {}
+       const query =   { category } 
         try {
             const product = await Prouct.find(query)
             
