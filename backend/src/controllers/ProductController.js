@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken')
 module.exports = {
      createProduct(req,res){
         jwt.verify(req.token ,'secret', async(err,authData)=>{
+            console.log(authData)
         if(err){
             res.sendStatus(403)
         }
@@ -79,12 +80,17 @@ module.exports = {
         }
     },
     
-    async getAllProducts (req,res){
+     getAllProducts (req,res){
+        jwt.verify(req.token ,'secret', async(err,authData)=>{
+            if(err){
+                res.sendStatus(403)
+            }
+            else{
         
         try { const product = await Prouct.find({})
             
         if(product){
-            return res.json(product)
+            return res.json({authData,product})
         }
              
         } catch (error) {
@@ -93,6 +99,39 @@ module.exports = {
             })
         }
     }
-   
 
+})
+    },
+     delete (req,res){
+
+       jwt.verify(req.token,'secret',async(err,authData)=>{
+
+         if(err){
+             res.status(403).json({
+                 message: 'unauthorized'
+             })
+         }
+         else{
+
+try {
+    const {productid}=req.params
+    await Prouct.findByIdAndDelete(productid)
+    return res.status(200).json({
+        message:'succefully deleted <3'
+    })
+
+    
+} catch (error) {
+   return res.status(400).json({
+        message:'no elemnt found!'
+    })
+    
 }
+
+         }
+
+
+       })
+
+    }    
+    }        

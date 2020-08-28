@@ -27,9 +27,9 @@ routes.post('/login',LoginController.userLogin)
 //produit
 routes.get('/products',verifyToken,ProductController.getAllProducts)
 routes.get('/products/:category',verifyToken,ProductController.getByCategory)
-routes.get('/product/:productid',verifyToken,ProductController.getProductByid)
+routes.get('/product/:productid',ProductController.getProductByid)
 routes.post('/product',verifyToken,upload.single('img'),ProductController.createProduct)
-
+routes.delete('/product/:productid',verifyToken,ProductController.delete)
 //user
  routes.post('/register',UserController.store)
  //routes.post('/user/:userid',UserController.getUserByid)

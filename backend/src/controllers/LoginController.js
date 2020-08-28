@@ -27,13 +27,16 @@ module.exports = {
                  _id : user._id,
                  email : user.email,
                  firstname : user.firstname,
-                 lastname : user.lastname
+                 lastname : user.lastname,
+            
               }
               //return res.json(userResp)
-              return jwt.sign({user : userResp},'secret',(err,token)=>{
+              return jwt.sign({user : userResp},'secret',{expiresIn : 90000 },(err,token)=>{
                   return res.json({
                       user : token ,
                       user_id : user._id 
+                      
+                      
 
                   }) 
                         

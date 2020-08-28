@@ -12,9 +12,8 @@ user :{
  ref :'User'
 }
 },{
-    toJSON : {
-        virtuals:true
-    }
+    
 })
+ProductSchema.set('toJSON',{virtuals : true})
 ProductSchema.virtual('img_url').get(function () {return `http://localhost:8000/filename/${this.img}`})
 module.exports=mongoose.model('product',ProductSchema)

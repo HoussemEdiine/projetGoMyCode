@@ -1,12 +1,15 @@
 import React , { useState} from 'react'
-import { Button, Form, FormGroup, Label, Input } from 'reactstrap';
+import { Button, Form, FormGroup, Label, Input ,Container} from 'reactstrap';
 import api from '../service/api'
 
 function Login({history}) {
  const [email , setEmail]=useState('h@hotmail')
  const [password , setPassword]=useState('****')
+ 
+ 
  const handleChange = async (e) =>{
      setEmail(e.target.value)
+
  }
  
    
@@ -28,7 +31,7 @@ function Login({history}) {
  }
  console.log( localStorage)
     return (
-        <div>
+       <Container style={{backgroundColor:'beige'}}>
         <Form >
         <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
           <Label for="exampleEmail" className="mr-sm-2">Email</Label>
@@ -38,10 +41,14 @@ function Login({history}) {
           <Label for="examplePassword" className="mr-sm-2">Password</Label>
           <Input type="password" value={password} name="password" placeholder="don't tell!" onChange={(e)=>setPassword(e.target.value)} />
         </FormGroup>
-        <Button onClick={handleSubmit}>Submit</Button>
+        <div style={{marginTop:'10px',alignItems:'center'}}>
+           <Button onClick={handleSubmit}>Login</Button>
+        <Button onClick={()=>history.push('/register')} style={{marginLeft:'20px'}} >Register</Button>
+        </div>
+       
       </Form>
     
-      </div>
+      </Container>
     )
 }
 

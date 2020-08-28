@@ -1,8 +1,9 @@
 import React,{useState,useEffect} from 'react'
+import {useHistory} from 'react-router-dom'
 import { Button, Form, FormGroup, Label, Input } from 'reactstrap';
 import api from '../service/api'
 
-function Products({history}) {
+function Products() {
     // product state useState('')
     const [img , setImg]=useState(null)
     const[name,setName]=useState('')
@@ -10,17 +11,18 @@ function Products({history}) {
     const [category , setCategoty] = useState('')
     const[price , setPrice] = useState(0)
     const [date , setDate] =useState('')
-    const [username , setUsername] = useState('unknown')
-
+    //user matter
+    const [usersession , setusersession]=useState(null)
+    const [username , setUsername] = useState(null)
+     const history = useHistory()
    // const user_id = localStorage.getItem('userid')
     const user  = localStorage.getItem('user')
      const userid = localStorage.getItem('userid')
       console.log(user)
-    useEffect(() =>{
-    if(!user){
-      history.push('/')
-    }
-   },[])
+
+      
+ 
+    
 //handle submit 
 const handlesubmit = async ev =>{
     ev.preventDefault()
@@ -48,26 +50,58 @@ const handlesubmit = async ev =>{
         setDiscription('')
         setCategoty('')
         setDate('')
+     history.push('/Dashbord')   
 }
+// fetching data from data
 useEffect(()=>{
+
   api.get(`/user/${userid}`,{headers:{user : user}})
-  .then(data =>setUsername(data.data.authData.user.firstname)) 
-   
-
-   
+  .then(data =>{setUsername(data.data.authData.user.firstname)
+              setusersession(data.status)
+            console.log(data)})
+        
+              if(username===null){
+               setUsername('Loading....')
+              }
+              
 },[])
- 
 
+//display user
+console.log(usersession)
 
+useEffect(()=>{
+if(usersession===403){
+  history.push('/login')
+}
+},[usersession])
 
+// session control
 
+   // logout function
+    const logout =  () =>{
+       localStorage.removeItem('user')
+       localStorage.removeItem('userid')
+       history.push('/login')
+     }
 
+  
+   
 
+      
+ // 
 
 
     return (
-        <Form>
-          <h1>{username}</h1>
+      <div>
+{ user ?
+  
+
+        (<Form>
+          <div>
+            <h1>{username}</h1>
+            <Button color='danger' onClick={logout}>Logout</Button>
+          </div>
+          
             <h2>adding product</h2>
              <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
           <Label  className="mr-sm-2">product image</Label>
@@ -95,8 +129,12 @@ useEffect(()=>{
         </FormGroup>
         
         <Button onClick={handlesubmit}>Submit</Button>
-      </Form>
+      </Form>):
+      history.push('/login')
+}
+      </div>
     )
+    
 }
 
 export default Products
